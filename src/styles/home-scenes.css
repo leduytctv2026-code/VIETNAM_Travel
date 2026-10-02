@@ -173,6 +173,10 @@
   padding-top: 0.3em;
 }
 
+.cinematic-home .hero-title {
+  overflow: visible;
+}
+
 .cinematic-home .hero-place-stack {
   position: relative;
   display: block;
