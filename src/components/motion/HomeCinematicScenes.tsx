@@ -18,6 +18,60 @@ export function useHomeCinematicScenes(root: RefObject<HTMLElement | null>) {
     main.classList.add("is-cinematic");
     const media = gsap.matchMedia();
     const context = gsap.context(() => {
+      media.add("(prefers-reduced-motion: no-preference)", () => {
+        const intro = main.querySelector<HTMLElement>('[data-scene="intro"]');
+        if (!intro) return;
+
+        const leftCopy = intro.querySelectorAll<HTMLElement>(
+          ".intro-strip p, .nonprofit, .country-overview > div:first-child",
+        );
+        const rightCopy = intro.querySelectorAll<HTMLElement>(
+          ".intro-description, .country-overview > div:last-child",
+        );
+        const reveal = gsap.timeline({
+          scrollTrigger: {
+            trigger: intro,
+            start: "top 55%",
+            once: true,
+          },
+        });
+        reveal
+          .fromTo(
+            leftCopy,
+            { x: -90, autoAlpha: 0 },
+            {
+              x: 0,
+              autoAlpha: 1,
+              duration: 0.8,
+              stagger: 0.1,
+              ease: "power3.out",
+              clearProps: "transform,opacity,visibility",
+            },
+            0,
+          )
+          .fromTo(
+            rightCopy,
+            { x: 90, autoAlpha: 0 },
+            {
+              x: 0,
+              autoAlpha: 1,
+              duration: 0.8,
+              stagger: 0.1,
+              ease: "power3.out",
+              clearProps: "transform,opacity,visibility",
+            },
+            0.1,
+          );
+
+        return () => {
+          reveal.scrollTrigger?.kill();
+          reveal.kill();
+          gsap.set([...leftCopy, ...rightCopy], {
+            clearProps: "transform,opacity,visibility",
+          });
+        };
+      });
+
       media.add(
         "(min-width: 1024px) and (min-height: 640px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
         () => {

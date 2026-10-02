@@ -2,6 +2,7 @@
 const config = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
   poweredByHeader: false,
+  devIndicators: false,
   images: {
     remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
     formats: ["image/avif", "image/webp"],
