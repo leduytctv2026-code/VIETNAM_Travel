@@ -44,6 +44,50 @@ export function MotionSystem() {
       }, 100);
     };
 
+    const jumpFromHomeHero = (event: WheelEvent) => {
+      if (pathname !== "/") return;
+      const hero = document.querySelector<HTMLElement>(
+        '.cinematic-home [data-scene="hero"]',
+      );
+      const intro = document.querySelector<HTMLElement>(
+        '.cinematic-home [data-scene="intro"]',
+      );
+      if (
+        !hero ||
+        !intro ||
+        event.deltaY <= 0 ||
+        Math.abs(event.deltaY) <= Math.abs(event.deltaX) ||
+        event.ctrlKey ||
+        document.querySelector("dialog[open]") ||
+        (event.target instanceof Element &&
+          event.target.closest("[data-lenis-prevent], .leaflet-container"))
+      )
+        return;
+
+      const headerHeight =
+        document.querySelector<HTMLElement>(".header")?.offsetHeight ?? 80;
+      const introTop = intro.getBoundingClientRect().top + window.scrollY;
+      const destination = introTop - headerHeight;
+      if (
+        window.scrollY >= destination - 8 ||
+        hero.getBoundingClientRect().bottom <= headerHeight + 8
+      )
+        return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const root = document.documentElement;
+      const previousScrollBehavior = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      window.scrollTo(0, destination);
+      root.style.scrollBehavior = previousScrollBehavior;
+      ScrollTrigger.update();
+    };
+    window.addEventListener("wheel", jumpFromHomeHero, {
+      capture: true,
+      passive: false,
+    });
+
     // GSAP owns the only animation clock. Touch devices keep native scrolling.
     // matchMedia also destroys smoothing immediately when the preference changes.
     media.add(
@@ -62,43 +106,6 @@ export function MotionSystem() {
             node.matches(
               ".leaflet-container, dialog, [role='dialog'], textarea, select, [data-lenis-prevent]",
             ),
-        });
-        const jumpFromHero = (event: WheelEvent) => {
-          if (pathname !== "/") return;
-          const hero = document.querySelector<HTMLElement>(
-            '.cinematic-home [data-scene="hero"]',
-          );
-          const intro = document.querySelector<HTMLElement>(
-            '.cinematic-home [data-scene="intro"]',
-          );
-          if (
-            !hero ||
-            !intro ||
-            event.deltaY <= 0 ||
-            Math.abs(event.deltaY) <= Math.abs(event.deltaX) ||
-            event.ctrlKey ||
-            document.querySelector("dialog[open]") ||
-            (event.target instanceof Element &&
-              event.target.closest("[data-lenis-prevent], .leaflet-container"))
-          ) return;
-
-          const headerHeight =
-            document.querySelector<HTMLElement>(".header")?.offsetHeight ?? 80;
-          const introTop = intro.getBoundingClientRect().top + window.scrollY;
-          const destination = introTop - headerHeight;
-          if (
-            window.scrollY >= destination - 8 ||
-            hero.getBoundingClientRect().bottom <= headerHeight + 8
-          ) return;
-
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          lenis.scrollTo(destination, { immediate: true });
-          ScrollTrigger.update();
-        };
-        window.addEventListener("wheel", jumpFromHero, {
-          capture: true,
-          passive: false,
         });
         const update = () => ScrollTrigger.update();
         const tick = (time: number) => lenis.raf(time * 1000);
@@ -125,7 +132,6 @@ export function MotionSystem() {
         scheduleRefresh();
 
         return () => {
-          window.removeEventListener("wheel", jumpFromHero, true);
           bodyObserver.disconnect();
           document.removeEventListener("toggle", syncScrollLock, true);
           ScrollTrigger.removeEventListener("refresh", resizeLenis);
@@ -210,6 +216,7 @@ export function MotionSystem() {
     return () => {
       disposed = true;
       clearTimeout(refreshTimer);
+      window.removeEventListener("wheel", jumpFromHomeHero, true);
       main?.removeEventListener("load", scheduleRefresh, true);
       window.removeEventListener("load", scheduleRefresh);
       media.revert();

@@ -38,12 +38,12 @@ export function useHomeCinematicScenes(root: RefObject<HTMLElement | null>) {
         reveal
           .fromTo(
             leftCopy,
-            { x: -90, autoAlpha: 0 },
+            { x: -150, autoAlpha: 0 },
             {
               x: 0,
               autoAlpha: 1,
-              duration: 0.8,
-              stagger: 0.1,
+              duration: 1.05,
+              stagger: 0.12,
               ease: "power3.out",
               clearProps: "transform,opacity,visibility",
             },
@@ -51,12 +51,12 @@ export function useHomeCinematicScenes(root: RefObject<HTMLElement | null>) {
           )
           .fromTo(
             rightCopy,
-            { x: 90, autoAlpha: 0 },
+            { x: 150, autoAlpha: 0 },
             {
               x: 0,
               autoAlpha: 1,
-              duration: 0.8,
-              stagger: 0.1,
+              duration: 1.05,
+              stagger: 0.12,
               ease: "power3.out",
               clearProps: "transform,opacity,visibility",
             },
