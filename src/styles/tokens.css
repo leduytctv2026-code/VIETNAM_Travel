@@ -1,0 +1,33 @@
+:root {
+  --color-forest-950: #071a14;
+  --color-forest-900: #0b241b;
+  --color-forest-800: #12382a;
+  --color-jade: #2d6a4f;
+  --color-gold: #d4a64a;
+  --color-terracotta: #d85f3d;
+  --color-white: #ffffff;
+  --color-paper: #f7f8f5;
+  --color-surface: #eef2ed;
+  --color-text: #10251c;
+  --color-muted: #66736c;
+  --color-line: #d8e2da;
+  --color-on-dark: #c6d7cd;
+  --color-error: #a33321;
+  --gutter: clamp(20px, 5vw, 80px);
+  --container-wide: 1440px;
+  --container-content: 1280px;
+  --container-reading: 820px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --shadow-sm: 0 8px 20px rgba(7, 26, 20, .08);
+  --shadow-md: 0 18px 50px rgba(7, 26, 20, .12);
+  --shadow-lg: 0 30px 80px rgba(7, 26, 20, .18);
+  --duration-fast: 180ms;
+  --duration-normal: 300ms;
+  --duration-slow: 550ms;
+  --duration-cinematic: 950ms;
+  --ease-standard: cubic-bezier(.2, .8, .2, 1);
+  --ease-cinematic: cubic-bezier(.22, 1, .36, 1);
+}

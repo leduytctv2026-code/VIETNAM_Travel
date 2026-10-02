@@ -1,0 +1,11 @@
+node_modules
+.next
+.next-motion-qa/
+.env*
+!.env.example
+*.tsbuildinfo
+.local/
+backend/dist/
+coverage/
+test-results/
+visual-check/
