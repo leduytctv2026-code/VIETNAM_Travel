@@ -71,7 +71,10 @@ export default function HeroSlider({ provinces }: { provinces: Content[] }) {
   const selectProvince = useCallback(
     (nextIndex: number) => {
       if (!provinces.length) return;
-      const boundedIndex = Math.max(0, Math.min(nextIndex, provinces.length - 1));
+      const boundedIndex = Math.max(
+        0,
+        Math.min(nextIndex, provinces.length - 1),
+      );
       setActiveIndex(boundedIndex);
       setAutoplayRestart((value) => value + 1);
     },
@@ -90,15 +93,8 @@ export default function HeroSlider({ provinces }: { provinces: Content[] }) {
         },
         (match) => {
           const select = gsap.utils.selector(target.current!);
-          const cardMotions = select(".hero-card-motion");
-          const activeCardMotion = target.current?.querySelector<HTMLElement>(
-            '.hero-card[data-active="true"] .hero-card-motion',
-          );
-
-          gsap.set(cardMotions, { autoAlpha: 0.72, y: 14, scale: 0.91 });
-          if (activeCardMotion) {
-            gsap.set(activeCardMotion, { autoAlpha: 1, y: 0, scale: 1 });
-          }
+          // Card state belongs only to the active-index effect below. A
+          // matchMedia revert must not restore an older card selection.
           if (!match.conditions?.motion) return;
 
           const desktop = Boolean(match.conditions.desktop);
@@ -534,10 +530,7 @@ export default function HeroSlider({ provinces }: { provinces: Content[] }) {
       <div className="hero-content-scroll">
         <div className="hero-content">
           <div className="hero-copy-parallax">
-            <h1
-              className="hero-title"
-              aria-label={activeName}
-            >
+            <h1 className="hero-title" aria-label={activeName}>
               <span
                 className="hero-line-mask hero-place-mask"
                 aria-hidden="true"
