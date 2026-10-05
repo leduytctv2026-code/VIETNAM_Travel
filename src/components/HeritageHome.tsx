@@ -15,6 +15,7 @@ import RandomDiscovery from "./discovery/RandomDiscovery";
 import CommunityGallery from "./community/CommunityGallery";
 import FeaturedDestinationCard from "./ui/FeaturedDestinationCard";
 import SpecialtyMedia from "./ui/SpecialtyMedia";
+import VietnamSilhouette from "./ui/VietnamSilhouette";
 import StickyHistoryStory from "./motion/StickyHistoryStory";
 import { useHomeCinematicScenes } from "./motion/HomeCinematicScenes";
 
@@ -50,7 +51,7 @@ export default function HeritageHome({ data }: { data: HomeBundle }) {
   return (
     <>
       <Header />
-      <main id="main" className="cinematic-home" ref={mainRef}>
+      <main id="main" className="cinematic-home home-panels" ref={mainRef}>
         {/* ================================================================
             SCENE 1: HERO (Fullscreen cinematic camera)
             ================================================================ */}
@@ -68,6 +69,26 @@ export default function HeritageHome({ data }: { data: HomeBundle }) {
         <section className="scene intro" data-scene="intro" id="country">
           <div className="scene-pin">
             <div className="scene-stage intro-stage">
+              <div className="intro-atlas" aria-hidden="true">
+                <span className="intro-atlas-coordinate intro-atlas-coordinate-north">
+                  23°23′ N
+                </span>
+                <span className="intro-atlas-coordinate intro-atlas-coordinate-south">
+                  08°34′ N
+                </span>
+                <VietnamSilhouette />
+                <span className="intro-atlas-region intro-atlas-region-north">
+                  {t("Bắc", "North")}
+                </span>
+                <span className="intro-atlas-region intro-atlas-region-central">
+                  {t("Trung", "Central")}
+                </span>
+                <span className="intro-atlas-region intro-atlas-region-south">
+                  {t("Nam", "South")}
+                </span>
+                <span className="intro-atlas-caption">VIETNAM · 63</span>
+              </div>
+
               <section className="intro-strip">
                 <span className="intro-mark">✳</span>
                 <p>
@@ -107,9 +128,13 @@ export default function HeritageHome({ data }: { data: HomeBundle }) {
                     )}
                   </div>
                   <h2>
-                    {t("Những miền đất.", "Places and people.")}
+                    <span className="country-headline-line">
+                      {t("Những miền đất.", "Places and people.")}
+                    </span>
                     <br />
-                    <em>{t("Những điều ở lại.", "Stories that stay.")}</em>
+                    <em className="country-headline-line">
+                      {t("Những điều ở lại.", "Stories that stay.")}
+                    </em>
                   </h2>
                 </div>
                 <div>
@@ -394,7 +419,7 @@ export default function HeritageHome({ data }: { data: HomeBundle }) {
         {/* ================================================================
             SCENE 8: OUTRO / COMMUNITY & EDITORIAL DISCOVERY
             ================================================================ */}
-        <section className="scene outro" data-scene="outro" id="community">
+        <section className="scene outro facts" data-scene="facts">
           <div className="scene-stage outro-stage">
             <div className="section-wrap fact-section">
               <div className="eyebrow">
@@ -428,7 +453,15 @@ export default function HeritageHome({ data }: { data: HomeBundle }) {
                 </>
               )}
             </div>
+          </div>
+        </section>
 
+        <section
+          className="scene outro community"
+          data-scene="community"
+          id="community"
+        >
+          <div className="scene-stage outro-stage">
             <div className="community-wrap">
               <div className="section-heading">
                 <div>
@@ -449,12 +482,16 @@ export default function HeritageHome({ data }: { data: HomeBundle }) {
               </div>
               <CommunityGallery compact />
             </div>
+          </div>
+        </section>
 
+        <section className="scene outro discovery" data-scene="discovery">
+          <div className="scene-stage outro-stage">
             <RandomDiscovery />
           </div>
         </section>
       </main>
-      <Footer />
+      <Footer homePanel />
     </>
   );
 }

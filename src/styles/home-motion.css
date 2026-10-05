@@ -1,0 +1,16 @@
+/* Animation hooks only: no spacing, sizes, typography or colour changes. */
+.cinematic-home .country-headline-line {
+  display: inline-block;
+}
+
+/* Contain temporary translations without creating a horizontal scrollbar. */
+.home-panel-footer {
+  overflow-x: clip;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-home [data-reveal],
+  .home-panel-footer [data-reveal] {
+    will-change: auto;
+  }
+}

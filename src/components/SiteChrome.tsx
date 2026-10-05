@@ -39,7 +39,12 @@ export function Header() {
           className={open ? "nav open" : "nav"}
         >
           {links.map(([href, vi, en]) => (
-            <Link href={href} key={href} aria-current={pathname === href ? "page" : undefined} onClick={() => setOpen(false)}>
+            <Link
+              href={href}
+              key={href}
+              aria-current={pathname === href ? "page" : undefined}
+              onClick={() => setOpen(false)}
+            >
               {t(vi, en)}
             </Link>
           ))}
@@ -79,38 +84,53 @@ export function SampleNote() {
     </p>
   );
 }
-export function Footer() {
+export function Footer({ homePanel = false }: { homePanel?: boolean }) {
   const { t } = useLanguage();
   return (
-    <footer className="site-footer">
+    <footer className={`site-footer${homePanel ? " home-panel-footer" : ""}`}>
       <div className="footer-top">
         <div className="footer-intro">
-        <Link href="/" className="footer-brand">
-          vietnam unfolded<span>.</span>
-        </Link>
-        <p>
-          <Leaf size={14} style={{ display: "inline", marginRight: 7 }} />
-          {t(
-            "Vì tri thức. Vì di sản. Phi thương mại.",
-            "For knowledge. For heritage. Non-commercial.",
-          )}
-        </p>
+          <Link href="/" className="footer-brand">
+            vietnam unfolded<span>.</span>
+          </Link>
+          <p>
+            <Leaf size={14} style={{ display: "inline", marginRight: 7 }} />
+            {t(
+              "Vì tri thức. Vì di sản. Phi thương mại.",
+              "For knowledge. For heritage. Non-commercial.",
+            )}
+          </p>
         </div>
-        <nav className="footer-column" aria-label={t("Khám phá ở chân trang", "Footer discovery")}>
+        <nav
+          className="footer-column"
+          aria-label={t("Khám phá ở chân trang", "Footer discovery")}
+        >
           <h3>{t("Khám phá", "Discover")}</h3>
-          <Link href="/explore">{t("Vùng miền & tỉnh thành", "Regions & provinces")}</Link>
+          <Link href="/explore">
+            {t("Vùng miền & tỉnh thành", "Regions & provinces")}
+          </Link>
           <Link href="/destinations">{t("Địa danh", "Destinations")}</Link>
           <Link href="/map">{t("Bản đồ Việt Nam", "Vietnam map")}</Link>
         </nav>
-        <nav className="footer-column" aria-label={t("Văn hóa ở chân trang", "Footer culture")}>
+        <nav
+          className="footer-column"
+          aria-label={t("Văn hóa ở chân trang", "Footer culture")}
+        >
           <h3>{t("Kết nối", "Connect")}</h3>
-          <Link href="/specialties">{t("Hương vị Việt Nam", "Local flavours")}</Link>
+          <Link href="/specialties">
+            {t("Hương vị Việt Nam", "Local flavours")}
+          </Link>
           <Link href="/community">{t("Cộng đồng", "Community")}</Link>
           <Link href="/admin">{t("Ban biên tập", "Editorial access")}</Link>
         </nav>
-        <div className="footer-column"><h3>{t("Ngôn ngữ", "Language")}</h3><LanguageSwitcher fullNames /></div>
+        <div className="footer-column">
+          <h3>{t("Ngôn ngữ", "Language")}</h3>
+          <LanguageSwitcher fullNames />
+        </div>
       </div>
-      <div className="footer-wordmark" aria-hidden="true">VIETNAM UNFOLDED</div>
+      <div className="footer-wordmark" aria-hidden="true">
+        VIETNAM UNFOLDED
+      </div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} Vietnam, Unfolded</span>
         <span>

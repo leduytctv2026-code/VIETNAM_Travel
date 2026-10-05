@@ -8,6 +8,8 @@ import "../styles/tokens.css";
 import "./globals.css";
 import "../styles/public.css";
 import "../styles/home-scenes.css";
+import "../styles/home-panels.css";
+import "../styles/home-motion.css";
 const displayFont = Noto_Serif({
   subsets: ["vietnamese", "latin"],
   variable: "--font-display",

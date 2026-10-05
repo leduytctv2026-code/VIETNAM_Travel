@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
+import { setupHomeWheelNavigation } from "./motion/homeWheelNavigation";
 
 const revealHeadingSelector = [
   ".section-heading h2",
@@ -44,55 +45,16 @@ export function MotionSystem() {
       }, 100);
     };
 
-    const jumpFromHomeHero = (event: WheelEvent) => {
-      if (pathname !== "/") return;
-      const hero = document.querySelector<HTMLElement>(
-        '.cinematic-home [data-scene="hero"]',
-      );
-      const intro = document.querySelector<HTMLElement>(
-        '.cinematic-home [data-scene="intro"]',
-      );
-      if (
-        !hero ||
-        !intro ||
-        event.deltaY <= 0 ||
-        Math.abs(event.deltaY) <= Math.abs(event.deltaX) ||
-        event.ctrlKey ||
-        document.querySelector("dialog[open]") ||
-        (event.target instanceof Element &&
-          event.target.closest("[data-lenis-prevent], .leaflet-container"))
-      )
-        return;
-
-      const headerHeight =
-        document.querySelector<HTMLElement>(".header")?.offsetHeight ?? 80;
-      const introTop = intro.getBoundingClientRect().top + window.scrollY;
-      const destination = introTop - headerHeight;
-      if (
-        window.scrollY >= destination - 8 ||
-        hero.getBoundingClientRect().bottom <= headerHeight + 8
-      )
-        return;
-
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      const root = document.documentElement;
-      const previousScrollBehavior = root.style.scrollBehavior;
-      root.style.scrollBehavior = "auto";
-      window.scrollTo(0, destination);
-      root.style.scrollBehavior = previousScrollBehavior;
-      ScrollTrigger.update();
-    };
-    window.addEventListener("wheel", jumpFromHomeHero, {
-      capture: true,
-      passive: false,
-    });
+    const cleanupHomeWheel =
+      pathname === "/" ? setupHomeWheelNavigation() : undefined;
 
     // GSAP owns the only animation clock. Touch devices keep native scrolling.
     // matchMedia also destroys smoothing immediately when the preference changes.
     media.add(
       "(min-width: 1024px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
       () => {
+        // Homepage wheel navigation already animates the document scroll.
+        if (pathname === "/") return;
         const root = document.documentElement;
         const originalScrollBehavior = root.style.scrollBehavior;
         root.style.scrollBehavior = "auto";
@@ -216,7 +178,7 @@ export function MotionSystem() {
     return () => {
       disposed = true;
       clearTimeout(refreshTimer);
-      window.removeEventListener("wheel", jumpFromHomeHero, true);
+      cleanupHomeWheel?.();
       main?.removeEventListener("load", scheduleRefresh, true);
       window.removeEventListener("load", scheduleRefresh);
       media.revert();

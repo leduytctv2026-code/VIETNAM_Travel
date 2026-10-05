@@ -1,17 +1,37 @@
 "use client";
 
-/**
- * Semantic grouping only. The global GSAP motion system owns scroll-triggered
- * reveals, preventing competing animation loops inside page components.
- */
+import { useMemo, useRef, type ReactNode } from "react";
+import { useScrollScene, type RevealOptions } from "./ScrollScene";
+
+/** Standalone primitive using the same once-only engine as the homepage scenes. */
 export default function Reveal({
   children,
   className,
-}: {
-  children: React.ReactNode;
+  ...options
+}: RevealOptions & {
+  children: ReactNode;
   className?: string;
-  delay?: number;
-  direction?: "up" | "left" | "right" | "fade";
 }) {
-  return <div className={className}>{children}</div>;
+  const root = useRef<HTMLDivElement>(null);
+  const { direction, distance, scale, rotate, delay, duration } = options;
+  const groups = useMemo(
+    () => [
+      {
+        selector: ":scope",
+        direction,
+        distance,
+        scale,
+        rotate,
+        delay,
+        duration,
+      },
+    ],
+    [direction, distance, scale, rotate, delay, duration],
+  );
+  useScrollScene(root, groups);
+  return (
+    <div ref={root} className={className}>
+      {children}
+    </div>
+  );
 }

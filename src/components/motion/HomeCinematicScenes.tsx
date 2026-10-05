@@ -3,11 +3,14 @@
 import { useLayoutEffect, type RefObject } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { setupScrollScene } from "./ScrollScene";
+import { footerRevealGroups, homeRevealScenes } from "./homeRevealScenes";
 
 /**
  * The page content stays in normal document flow. Only the existing Hero
  * camera responds to scroll; no content section is pinned or assigned an
- * artificial multi-viewport height.
+ * artificial multi-viewport height. Viewport reveals own separate content
+ * elements; GSAP retains ownership only of the existing hero scrub.
  */
 export function useHomeCinematicScenes(root: RefObject<HTMLElement | null>) {
   useLayoutEffect(() => {
@@ -16,62 +19,18 @@ export function useHomeCinematicScenes(root: RefObject<HTMLElement | null>) {
 
     gsap.registerPlugin(ScrollTrigger);
     main.classList.add("is-cinematic");
+    const cleanups = homeRevealScenes.flatMap(
+      ({ selector, groups, watchChildren }) => {
+        const scene = main.querySelector<HTMLElement>(selector);
+        return scene ? [setupScrollScene(scene, groups, watchChildren)] : [];
+      },
+    );
+    const footer = main.nextElementSibling;
+    if (footer instanceof HTMLElement && footer.matches(".home-panel-footer")) {
+      cleanups.push(setupScrollScene(footer, footerRevealGroups));
+    }
     const media = gsap.matchMedia();
     const context = gsap.context(() => {
-      media.add("(prefers-reduced-motion: no-preference)", () => {
-        const intro = main.querySelector<HTMLElement>('[data-scene="intro"]');
-        if (!intro) return;
-
-        const leftCopy = intro.querySelectorAll<HTMLElement>(
-          ".intro-strip p, .nonprofit, .country-overview > div:first-child",
-        );
-        const rightCopy = intro.querySelectorAll<HTMLElement>(
-          ".intro-description, .country-overview > div:last-child",
-        );
-        const reveal = gsap.timeline({
-          scrollTrigger: {
-            trigger: intro,
-            start: "top 55%",
-            once: true,
-          },
-        });
-        reveal
-          .fromTo(
-            leftCopy,
-            { x: -150, autoAlpha: 0 },
-            {
-              x: 0,
-              autoAlpha: 1,
-              duration: 1.05,
-              stagger: 0.12,
-              ease: "power3.out",
-              clearProps: "transform,opacity,visibility",
-            },
-            0,
-          )
-          .fromTo(
-            rightCopy,
-            { x: 150, autoAlpha: 0 },
-            {
-              x: 0,
-              autoAlpha: 1,
-              duration: 1.05,
-              stagger: 0.12,
-              ease: "power3.out",
-              clearProps: "transform,opacity,visibility",
-            },
-            0.1,
-          );
-
-        return () => {
-          reveal.scrollTrigger?.kill();
-          reveal.kill();
-          gsap.set([...leftCopy, ...rightCopy], {
-            clearProps: "transform,opacity,visibility",
-          });
-        };
-      });
-
       media.add(
         "(min-width: 1024px) and (min-height: 640px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
         () => {
@@ -148,6 +107,7 @@ export function useHomeCinematicScenes(root: RefObject<HTMLElement | null>) {
       disposed = true;
       clearTimeout(timer);
       main.removeEventListener("load", refresh, true);
+      cleanups.forEach((cleanup) => cleanup());
       media.revert();
       context.revert();
       main.classList.remove("is-cinematic");
